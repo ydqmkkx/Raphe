@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset="UTF-8">
+  <title>Raphe: A Cascade Pre-Trained Phoneme Encoder with Subword Representations Alignment for Text-to-Speech</title>
+  <style>
+    table {
+        border-collapse: collapse; /* 移除或减少边框间距 */
+        table-layout: fixed; /* 固定布局使列宽均匀 */
+        width: 120%; /* 可以调整表格的总宽度 */
+    }
+    th {
+        padding: 5px; /* 减少单元格内边距 */
+        text-align: center; /* 可选：居中对齐内容 */
+    }
+    td {
+        padding: 5px; /* 减少单元格内边距 */
+        text-align: left; /* 可选：居中对齐内容 */
+    }
+    audio {
+        width: 100%; /* 让音频播放器填满单元格 */
+    }
+  </style>
+  <style>
+    .two-column-table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 50%; /* 新的两列表格总宽度为原来的一半 */
+    }
+    .two-column-table th {
+        padding: 5px;
+        text-align: center; /* 根据需要可以居中或靠左 */
+    }
+    .two-column-table td {
+        padding: 5px;
+        text-align: left; /* 根据需要可以居中或靠左 */
+    }
+    audio {
+        width: 100%;
+    }
+  </style>
+  <style>
+    .three-column-table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 75%;
+    }
+    .three-column-table th {
+        padding: 5px;
+        text-align: center;
+    }
+    .three-column-table td {
+        padding: 5px;
+        text-align: left;
+    }
+    audio {
+        width: 100%;
+    }
+  </style>
+  </head>
+
+<body>
+<font size='4', face="Arial"><h1><center>Raphe: A Cascade Pre-Trained Phoneme Encoder with Subword Representations Alignment for Text-to-Speech</center></h1></font>
+<font size='4', face="Arial"><center><b>Authors: </b> Dong Yang, Yuki Saito, Wataru Nakata, Hiroshi Saruwatari </center></font>
+<p></p> 
+<!--<font size='4', face="Arial"><center><a href="https://arxiv.org/abs/2402.00288">arXiv</a> <a href="https://github.com/ydqmkkx/Respiro-en">GitHub</a></center></font>
+<!-- <center><a href="https://arxiv.org/abs/">arxiv preprint</a></center> -->
+<!-- <center><a href="https://ydqmkkx.github.io/breath-detection/poster.html">poster</a></center> -->
+                            
+<br></br>
+<hr/>                     
+
+<p></p>
+<font size='4', face="Arial">We sampled 15 speaker-text pairs for this demo page.</font><br>
+<font size='4', face="Arial">For each pair, the first row corresponds to Table I and the second row corresponds to Table II from our paper.</font><br>
+<font size='4', face="Arial">Notably, the <b>75%</b> in Table I is also the <b>Raphe-1e</b> in Table II.</font>
+<p></p>
+
+<font size='4', face="Arial">For convenience, we display only the subword sequence, where ## is the subword prefix, / is the respiratory pause mark, and ^ is the breath mark.</font>
+<p></p>
+
+<table >
+  <tbody>
+    <tr>
+      <td colspan="8"><span><font size='4' face="Arial">1.(speaker id: 278) ill / as he had fare ##d in his interview with the archdeacon ^ he was not the less under the necessity of carrying out his pledge to / eleanor
+      <!--278_127215_000012_000001_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/278_127215_000012_000001_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/278_127215_000012_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/278_127215_000012_000001_0.wav"></audio></td>
+    </tr>
+
+    <tr>
+      <td colspan="8"><span><font size='4' face="Arial">2.(speaker id: 688) ordinary phosphorus is soluble in oil , alcohol , ether , ch ##lor ##of ##or ##m , and carbon di ##sul ##phi ##de ; ins ##ol ##ub ##le in water ^ it is much used in rat poison ##s
+      <!--688_15446_000047_000002_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/688_15446_000047_000002_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/688_15446_000047_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/688_15446_000047_000002_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">3.(speaker id: 1018) that reminds me of ^ of something i wanted to say to you , she said ^ you re quite right about people not rep ##ress ##ing their inclination ##s
+      <!--1018_133447_000020_000000_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/1018_133447_000020_000000_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/1018_133447_000020_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/1018_133447_000020_000000_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">4.(speaker id: 1212) first he released the little dog ' s head ^ which had been bent down between his fore legs
+      <!--1212_75242_000028_000004_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/1212_75242_000028_000004_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/1212_75242_000028_000004_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/1212_75242_000028_000004_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">5.(speaker id: 1779) the whole meta ##physics of / aristotle ^ is dominated by the / distinction between form ^ and matter
+      <!--1779_142733_000019_000000_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/1779_142733_000019_000000_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/1779_142733_000019_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/1779_142733_000019_000000_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">6.(speaker id: 3307) in order to discover if the thom ##is ##us is capable ^ of a similar error ^ i gathered some broken pieces of silk worm s coco ##on into a closed / cone ^ turning the fragments /
+      <!--3307_145138_000022_000002_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/3307_145138_000022_000002_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/3307_145138_000022_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/3307_145138_000022_000002_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">7.(speaker id: 3549) but when they came / to make the experiment , they were disappointed of their hope ^ for the miners could make but small progress ^ and that with difficulty also
+      <!--3549_171171_000017_000006_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/3549_171171_000017_000006_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/3549_171171_000017_000006_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/3549_171171_000017_000006_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">8.(speaker id: 3945) philip had to walk some five miles before he reached a little station , where he could wait for a train , and he had ample time for reflection
+      <!--3945_29110_000024_000000_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/3945_29110_000024_000000_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/3945_29110_000024_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/3945_29110_000024_000000_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">9.(speaker id: 3977) ^ and ph ##logist ##icated air less ; but after passing through the water ^ they appeared / not to have been sen ##si ##bly changed by the process
+      <!--3977_87547_000014_000001_1.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/3977_87547_000014_000001_1.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/3977_87547_000014_000001_1.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/3977_87547_000014_000001_1.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">10.(speaker id: 4290) joy appeared to have passed away as a factor of life ^ and this creative impulse had nothing to take its place
+      <!--4290_7622_000013_000002_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/4290_7622_000013_000002_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/4290_7622_000013_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/4290_7622_000013_000002_0.wav"></audio></td>
+    </tr>
+    
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">11.(speaker id: 4290) he was a very keen person and i m afraid ^ he chuckled with / evident satisfaction to himself ^ i m really afraid , mr glen ##arm that you re not
+      <!--4595_45204_000036_000002_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/4595_45204_000036_000002_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/4595_45204_000036_000002_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/4595_45204_000036_000002_0.wav"></audio></td>
+    </tr>
+    
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">12.(speaker id: 4973) it may proceed from the gaze of the many eyes that turn upon the speaker ^ especially if he permits himself to steadily return that gaze
+      <!--4973_44575_000003_000001_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/4973_44575_000003_000001_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/4973_44575_000003_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/4973_44575_000003_000001_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">13.(speaker id: 5189) there s no law in christ ##end ##om against bas ##ting a man with a roast pig ! dick s weapon failed before his anger
+      <!--5189_59288_000010_000001_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/5189_59288_000010_000001_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/5189_59288_000010_000001_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/5189_59288_000010_000001_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">14.(speaker id: 7120) at the same time / it may be seen ^ how much / anxiety , care ^ hazard ^ delay / and material / aid ^ were required /
+      <!--7120_118112_000000_000005_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/7120_118112_000000_000005_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/7120_118112_000000_000005_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/7120_118112_000000_000005_0.wav"></audio></td>
+    </tr>
+
+    <tr></tr>
+      <td colspan="8"><span><font size='4' face="Arial">15.(speaker id: 7688) his royal highness the prince of wales had promised / to be present . he was coming on presently from the opera
+      <!--7688_105390_000005_000000_0.wav-->
+      </font></span></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial">15%</font></th>
+      <th><font size='4' face="Arial">30%</font></th>
+      <th><font size='4' face="Arial">45%</font></th>
+      <th><font size='4' face="Arial">60%</font></th>
+      <th><font size='4' face="Arial">75% (Raphe-1e)</font></th>
+      <th><font size='4' face="Arial">90%</font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/15/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/30/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/45/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/60/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/75/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/90/7688_105390_000005_000000_0.wav"></audio></td>
+    </tr>
+    <tr>
+      <th><font size='4' face="Arial"><b>Ground truth</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-10e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>Raphe-parallel-0e</b></font></th>
+      <th><font size='4' face="Arial"><b>MP BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>PL BERT</b></font></th>
+      <th><font size='4' face="Arial"><b>Baseline</b></font></th>
+    </tr>
+    <tr>
+      <td><audio controls="controls"><source src="audio/gt/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/10e/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/0e/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/parallel/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/mpbert/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/plbert/7688_105390_000005_000000_0.wav"></audio></td>
+      <td><audio controls="controls"><source src="audio/baseline/7688_105390_000005_000000_0.wav"></audio></td>
+    </tr>
+
+  </tbody>
+</table>
+
+</body>
+</html>
+
